@@ -1,0 +1,206 @@
+---
+description: "Memory Bank mandatory workflow - obligatorio para todos los agentes AI"
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Mandatory Memory Bank Workflow
+
+## OBLIGATORIO: Leer antes de cualquier tarea
+
+Debes comenzar CADA tarea leyendo estos archivos en orden:
+
+1. `memory-bank/projectbrief.md` - Qué es el proyecto, alcance, stakeholders
+2. `memory-bank/productContext.md` - Por qué existe, cómo funciona, casos de uso
+3. `memory-bank/systemPatterns.md` - Arquitectura, patrones aplicados
+4. `memory-bank/techContext.md` - Stack tecnológico, setup local
+5. `memory-bank/activeContext.md` - Estado actual, próximos pasos
+6. `memory-bank/progress.md` - Qué funciona, qué falta, deuda técnica
+
+## Estructura del Memory Bank
+
+```
+memory-bank/
+├── projectbrief.md          [Core - LEER SIEMPRE]
+├── productContext.md         [Core - LEER SIEMPRE]
+├── systemPatterns.md         [Core - LEER SIEMPRE]
+├── techContext.md            [Core - LEER SIEMPRE]
+├── activeContext.md          [Core - LEER SIEMPRE]
+├── progress.md               [Core - LEER SIEMPRE]
+├── architecture/
+│   ├── overview.md           [Referencia arquitectónica]
+│   └── diagrams.md           [Diagramas visuales]
+├── domains/
+│   ├── domain-model.md       [Modelo de dominio DDD]
+│   └── key-flows.md          [Flujos de negocio]
+├── interfaces/
+│   └── api.md                [Contratos API REST]
+├── ops/
+│   ├── local-dev.md          [Guía desarrollo local]
+│   └── deployment.md         [Deployment (no implementado)]
+├── quality/
+│   ├── testing.md            [Estrategia de testing]
+│   └── linting-format.md     [Code quality]
+└── decisions/
+    └── ADR-*.md              [Architecture Decision Records]
+```
+
+## Cuándo actualizar el Memory Bank
+
+Actualiza los archivos correspondientes cuando:
+
+- ✅ Implementes cambios significativos de arquitectura
+- ✅ Añadas nuevas entidades o módulos
+- ✅ Descubras patrones o antipatterns no documentados
+- ✅ Corrijas suposiciones incorrectas (marca como CORRECCIÓN)
+- ✅ Completes items del backlog en progress.md
+- ✅ El usuario solicite explícitamente "update memory bank"
+
+NO actualices por cambios triviales (fix typos, pequeños ajustes).
+
+## Protocolo de actualización
+
+1. **Identifica qué archivo(s) actualizar**:
+   - Cambio de arquitectura → `architecture/overview.md` + `systemPatterns.md`
+   - Nueva feature → `progress.md` + `activeContext.md`
+   - Nuevo endpoint → `interfaces/api.md`
+   - Cambio de dominio → `domains/domain-model.md`
+   - Decisión técnica importante → crear nuevo `decisions/ADR-NNNN-<slug>.md`
+
+2. **Actualiza con formato consistente**:
+   - Añade sección "## Changelog" al final si no existe
+   - Formato: `- YYYY-MM-DD: <descripción cambio> [<autor/agente>]`
+
+3. **Actualiza activeContext.md**:
+   - Actualiza "Estado actual del proyecto"
+   - Marca items completados en "Next steps"
+   - Añade nuevos next steps si aplica
+
+4. **Actualiza progress.md**:
+   - Marca como ✅ lo que funciona
+   - Mueve de "Qué falta" a "Qué funciona"
+   - Actualiza métricas si es relevante
+
+## Reglas de escritura
+
+### ❌ NO hagas esto:
+- NO inventes información que no puedes verificar en el código
+- NO copies código extenso (solo snippets ilustrativos)
+- NO borres información previa sin marcar como "SUPERSEDED"
+- NO uses términos vagos ("probablemente", "parece que")
+
+### ✅ SÍ haz esto:
+- Usa bullets y secciones claras
+- Incluye rutas de archivos exactas
+- Marca incertidumbres como `UNKNOWN` o `⚠️`
+- Añade sección "Preguntas al humano" si hay dudas
+- Usa bloques de código para ejemplos concretos
+- Incluye comandos verificables
+
+## Ejemplos de uso correcto
+
+### Ejemplo 1: Añadir nuevo endpoint
+
+**Tarea**: "Añade endpoint DELETE /candidates/:id"
+
+**Workflow**:
+1. Lee memory-bank core files (6 archivos)
+2. Implementa endpoint siguiendo patrones en `systemPatterns.md`
+3. Añade tests según `quality/testing.md`
+4. Actualiza `interfaces/api.md` con nueva ruta
+5. Actualiza `progress.md`: mueve "CRUD candidatos" de ⚠️ a ✅
+6. Actualiza `activeContext.md`: marca "implementar delete" como completado
+
+### Ejemplo 2: Refactor a Repository Pattern
+
+**Tarea**: "Implementa repository pattern para Candidate"
+
+**Workflow**:
+1. Lee memory-bank core files
+2. Lee `architecture/overview.md` - sección "Limitaciones"
+3. Lee `domains/domain-model.md` - sección "Repositorios"
+4. Implementa ICandidateRepository + CandidateRepository
+5. Refactoriza Candidate model para no llamar Prisma
+6. Actualiza `systemPatterns.md`: remueve "Active Record anti-pattern"
+7. Actualiza `architecture/overview.md`: añade Repository en diagrama
+8. Crea `decisions/ADR-0002-implement-repository-pattern.md`
+9. Actualiza `progress.md`: marca deuda técnica #6 como resuelta
+
+### Ejemplo 3: Descubres información incorrecta
+
+**Situación**: Memory Bank dice "No hay tests" pero encuentras 4 archivos test
+
+**Workflow**:
+1. Lee el archivo actual (`progress.md` o similar)
+2. Busca sección incorrecta
+3. Actualiza con información correcta
+4. Añade nota: `⚠️ CORRECCIÓN [2026-01-19]: Descripción anterior incorrecta. Situación real es...`
+
+## Integración con workflow de desarrollo
+
+### Inicio de sesión
+```
+1. Leer 6 core files del Memory Bank
+2. Revisar activeContext.md → "Next steps"
+3. Identificar tarea actual
+4. Proceder con implementación
+```
+
+### Durante desarrollo
+```
+- Consultar architecture/ cuando tengas dudas de diseño
+- Consultar domains/ para entender modelo de negocio
+- Consultar interfaces/ para contratos API
+```
+
+### Fin de sesión
+```
+1. Actualizar progress.md con lo completado
+2. Actualizar activeContext.md con nuevo estado
+3. Crear/actualizar ADR si tomaste decisión arquitectónica
+4. Commit de código + Memory Bank actualizado
+```
+
+## Comando rápido para agentes
+
+Cuando comiences una tarea nueva, ejecuta mentalmente:
+
+```
+LEER:
+- projectbrief.md → Contexto general
+- activeContext.md → "Next steps" → Identificar tarea
+- systemPatterns.md → Seguir patrones existentes
+- techContext.md → Stack y comandos
+
+IMPLEMENTAR:
+- Seguir convenciones detectadas
+- Escribir tests según quality/testing.md
+- Actualizar documentación si aplica
+
+ACTUALIZAR:
+- progress.md → Marcar como completado
+- activeContext.md → Nuevo estado
+```
+
+## Violaciones y excepciones
+
+### ⛔ NUNCA omitas la lectura del Memory Bank si:
+- Es tu primera tarea en el proyecto
+- Han pasado >7 días desde tu última intervención
+- Vas a hacer cambios arquitectónicos
+
+### ✅ Puedes omitir lectura completa si:
+- Es continuación inmediata de tarea previa (mismo contexto)
+- Es fix trivial (typo, formatting)
+- Solo estás leyendo código sin modificar
+
+### 🚨 Si encuentras contradicción entre Memory Bank y código:
+1. **Código es verdad absoluta**
+2. Investiga cuál es correcto
+3. Actualiza Memory Bank con corrección
+4. Añade nota explicando la discrepancia
+
+---
+
+**Última actualización**: 2026-01-19 (creación inicial)
+**Próxima revisión**: Después de primera iteración de uso por agentes

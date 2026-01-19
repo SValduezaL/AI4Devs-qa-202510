@@ -1,0 +1,313 @@
+---
+description: "Engineering standards and conventions for LTI project"
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+alwaysApply: true
+---
+
+# Engineering Standards - LTI Talent Tracking System
+
+## Code Conventions
+
+### TypeScript/JavaScript
+
+#### Naming
+- **Variables/functions**: camelCase → `getCandidateById`, `candidateData`
+- **Classes**: PascalCase → `Candidate`, `InterviewFlow`
+- **Constants**: UPPER_SNAKE_CASE → `MAX_FILE_SIZE`, `API_URL`
+- **Files**: 
+  - Models: PascalCase → `Candidate.ts`
+  - Services: camelCase → `candidateService.ts`
+  - Components: PascalCase → `AddCandidateForm.js`
+
+#### File Structure (Backend)
+```
+backend/src/
+├── domain/models/        → Entities: Candidate.ts, Position.ts
+├── application/services/ → Services: candidateService.ts
+├── presentation/controllers/ → Controllers: candidateController.ts
+└── routes/               → Routes: candidateRoutes.ts
+```
+
+#### File Structure (Frontend)
+```
+frontend/src/
+├── components/  → React components (PascalCase)
+├── services/    → API calls (camelCase)
+└── config/      → Configuration files
+```
+
+### DDD Patterns (Backend)
+
+#### Layer Responsibilities
+```typescript
+// ❌ MAL: Controller con lógica de negocio
+app.post('/candidates', (req, res) => {
+  const candidate = new Candidate(req.body);
+  candidate.save();
+});
+
+// ✅ BIEN: Controller delega a service
+app.post('/candidates', candidateController.addCandidate);
+// Controller llama a candidateService.addCandidate()
+// Service orquesta creación de Candidate + relaciones
+```
+
+#### Validación
+```typescript
+// ❌ MAL: Validación en controller
+if (!email.includes('@')) throw new Error();
+
+// ✅ BIEN: Validación en validator o domain model
+validateCandidateData(data); // En application/validator
+// o
+candidate.validateEmail();   // En domain/model
+```
+
+### Error Handling
+
+#### Backend
+```typescript
+// ✅ BIEN: Try-catch en controllers/services
+try {
+  const result = await service.method(data);
+  res.status(200).json(result);
+} catch (error) {
+  if (error instanceof ValidationError) {
+    res.status(400).json({message: error.message});
+  } else {
+    res.status(500).json({message: 'Internal error'});
+  }
+}
+```
+
+#### Frontend
+```typescript
+// ✅ BIEN: Try-catch en service calls
+try {
+  const data = await candidateService.addCandidate(candidate);
+  // Show success
+} catch (error) {
+  // Show error to user
+  console.error('Failed to add candidate:', error);
+}
+```
+
+## Testing Standards
+
+### Backend Tests (Jest)
+
+**Ubicación**: Junto al archivo fuente → `candidateService.test.ts`
+
+**Estructura**:
+```typescript
+describe('candidateService', () => {
+  describe('addCandidate', () => {
+    it('should create candidate with educations', async () => {
+      // Arrange
+      const candidateData = {...};
+      
+      // Act
+      const result = await addCandidate(candidateData);
+      
+      // Assert
+      expect(result).toHaveProperty('id');
+      expect(result.educations).toHaveLength(1);
+    });
+    
+    it('should throw error for duplicate email', async () => {
+      // ...
+    });
+  });
+});
+```
+
+**Comandos**:
+```bash
+npm test                    # Todos los tests
+npm test -- candidateService # Test específico
+npm test -- --coverage      # Con coverage
+```
+
+### Frontend Tests (React Testing Library)
+
+**⚠️ FALTANTES** - Implementar según este patrón:
+```typescript
+import { render, screen } from '@testing-library/react';
+import AddCandidateForm from './AddCandidateForm';
+
+test('renders form fields', () => {
+  render(<AddCandidateForm />);
+  expect(screen.getByLabelText(/first name/i)).toBeInTheDocument();
+});
+```
+
+## Git Workflow
+
+### Commit Messages
+
+**Formato**: `<type>: <description>`
+
+**Types**:
+- `feat`: Nueva feature
+- `fix`: Bug fix
+- `refactor`: Refactorización sin cambio funcional
+- `test`: Añadir/modificar tests
+- `docs`: Documentación
+- `chore`: Tareas mantenimiento (deps, config)
+
+**Ejemplos**:
+```
+feat: add DELETE /candidates/:id endpoint
+fix: validate unique email before creating candidate
+refactor: extract validation logic to separate module
+test: add tests for candidateService.updateStage
+docs: update API documentation with new endpoints
+chore: update dependencies to latest versions
+```
+
+### Branch Strategy (según README)
+
+**Workflow**:
+1. Fork del repositorio principal
+2. Trabajo en fork personal (ramas opcionales)
+3. Validación completa en fork (tests, CI/CD)
+4. Pull Request con evidencia de funcionamiento
+
+**Naming de ramas** (si se usan):
+- `feature/<nombre>` → Nueva funcionalidad
+- `fix/<nombre>` → Bug fix
+- `refactor/<nombre>` → Refactorización
+
+## "Don't Touch" Zones
+
+### ⚠️ Cuidado con estos archivos
+
+- `backend/prisma/migrations/*` → NO modificar manualmente, usar `prisma migrate`
+- `backend/prisma/schema.prisma` → Cambios requieren migración
+- `.env` → NO commitear (usar .env.example)
+- `node_modules/` → Generado, NO commitear
+- `backend/dist/` → Build output, NO commitear
+- `frontend/build/` → Build output, NO commitear
+
+### 🔒 NO implementar sin consultar
+
+- Autenticación/Autorización (requiere diseño completo)
+- Cambio de base de datos (alto impacto)
+- Migración a microservicios (cambio arquitectónico mayor)
+
+## Code Review Checklist
+
+Antes de crear PR, verifica:
+
+### Funcionalidad
+- [ ] Feature funciona según especificación
+- [ ] No hay regresiones en features existentes
+- [ ] Validaciones implementadas correctamente
+- [ ] Error handling apropiado
+
+### Tests
+- [ ] Tests escritos para nueva funcionalidad
+- [ ] Tests existentes pasan
+- [ ] Coverage no disminuye
+
+### Código
+- [ ] Sigue convenciones de naming
+- [ ] Respeta arquitectura en capas
+- [ ] No hay código comentado innecesario
+- [ ] No hay console.logs de debug
+
+### Documentación
+- [ ] API documentada en api-spec.yaml (si aplica)
+- [ ] README actualizado si es setup change
+- [ ] Memory Bank actualizado si es cambio significativo
+- [ ] Comentarios en código complejo
+
+### Build & Deploy
+- [ ] `npm run build` exitoso (backend y frontend)
+- [ ] No hay warnings de compilación
+- [ ] Migraciones de BD incluidas si aplica
+
+## Definition of Done
+
+Una tarea está **Done** cuando:
+
+1. ✅ Código implementado siguiendo convenciones
+2. ✅ Tests escritos y pasando
+3. ✅ Documentación actualizada
+4. ✅ Build exitoso sin warnings
+5. ✅ Code review aprobado (en workflow colaborativo)
+6. ✅ Merged a rama principal
+
+## Proceso de cambio
+
+### Para cambios pequeños (< 1 hora)
+1. Leer Memory Bank (core files)
+2. Implementar según patrones existentes
+3. Añadir tests si aplica
+4. Actualizar docs mínimas
+5. Commit
+
+### Para cambios medianos (1-4 horas)
+1. Leer Memory Bank completo
+2. Crear plan de implementación
+3. Implementar con tests
+4. Actualizar Memory Bank (progress.md, activeContext.md)
+5. Actualizar API docs si aplica
+6. Commit
+
+### Para cambios grandes (> 4 horas)
+1. Leer Memory Bank completo
+2. Crear ADR (Architecture Decision Record)
+3. Discutir con equipo/instructor
+4. Implementar en iteraciones pequeñas
+5. Actualizar Memory Bank completo
+6. Documentar decisiones arquitectónicas
+7. Multiple commits
+
+## Prohibiciones
+
+### ❌ NUNCA hagas esto:
+
+1. **NO commitear código sin tests** (excepto docs)
+2. **NO hacer push --force a main/master**
+3. **NO modificar .gitignore para incluir node_modules o dist**
+4. **NO hardcodear credenciales o secrets**
+5. **NO usar `any` en TypeScript sin justificación**
+6. **NO mezclar refactor con features** (commits separados)
+7. **NO borrar código comentándolo** (usa git)
+8. **NO modificar múltiples capas en un solo archivo** (respetar SRP)
+
+### ⚠️ Evita si es posible:
+
+1. Dependencias directas de Prisma en domain models (usar repositories)
+2. Lógica de negocio en controllers (mover a services)
+3. console.log para logging (usar librería estructurada)
+4. Queries N+1 (usar Prisma includes)
+5. Magic numbers/strings (usar constantes)
+
+## Herramientas recomendadas
+
+### VSCode Extensions
+- ESLint
+- Prettier
+- Prisma
+- GitLens
+- Thunder Client (para testing API)
+
+### CLI Tools
+- `npx prisma studio` → Explorar BD
+- `npm run dev` → Hot reload backend
+- `npm start` → Hot reload frontend
+
+## Recursos
+
+- **Architecture**: `memory-bank/architecture/overview.md`
+- **DDD Patterns**: `backend/ManifestoBuenasPracticas.md`
+- **API Spec**: `backend/api-spec.yaml`
+- **Data Model**: `backend/ModeloDatos.md`
+- **Setup**: `memory-bank/ops/local-dev.md`
+
+---
+
+**Última actualización**: 2026-01-19
+**Contacto**: Ver README para información del instructor
