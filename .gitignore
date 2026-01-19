@@ -16,11 +16,16 @@
 # ============================================
 # Archivos de entorno (excepto .env.example)
 .env
-.env.*
-!.env.example
+.env.local
+.env.development
+.env.production
+.env.test
 **/.env
-**/.env.*
-!**/.env.example
+**/.env.local
+**/.env.development
+**/.env.production
+**/.env.test
+# Nota: .env.example NO está ignorado intencionalmente
 
 # ============================================
 # BUILD Y COMPILACIÓN
