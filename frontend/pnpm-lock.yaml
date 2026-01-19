@@ -72,11 +72,19 @@ importers:
         specifier: ^2.1.4
         version: 2.1.4
     devDependencies:
+      '@4tw/cypress-drag-drop':
+        specifier: ^2.3.1
+        version: 2.3.1(cypress@15.9.0)
       cypress:
         specifier: ^15.9.0
         version: 15.9.0
 
 packages:
+
+  '@4tw/cypress-drag-drop@2.3.1':
+    resolution: {integrity: sha512-ht9Mx0eK+j4UO7fZvHNyCGOQEIj4d5+CZDYdxUCHGL4yvEhdDBH6PT4Lt12Ct+O+8qK8K1K31p7iiOghA8ewxQ==}
+    peerDependencies:
+      cypress: '>=2'
 
   '@adobe/css-tools@4.4.4':
     resolution: {integrity: sha512-Elp+iwUx5rN5+Y8xLt5/GRoG20WGoDCQ/1Fb+1LiGtvwbDavuSk0jhD/eZdckHAuzcDzccnkv+rEjyWfRx18gg==}
@@ -6099,6 +6107,10 @@ packages:
     engines: {node: '>=10'}
 
 snapshots:
+
+  '@4tw/cypress-drag-drop@2.3.1(cypress@15.9.0)':
+    dependencies:
+      cypress: 15.9.0
 
   '@adobe/css-tools@4.4.4': {}
 

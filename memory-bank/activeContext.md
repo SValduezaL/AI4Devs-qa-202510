@@ -3,7 +3,7 @@
 ## Estado actual del proyecto
 
 **Fecha de creación de Memory Bank**: 2026-01-19  
-**Última actualización**: 2026-01-19 (tests E2E con Cypress)  
+**Última actualización**: 2026-01-19 (sesión 3 - hallazgos sobre drag & drop testing)  
 **Versión del proyecto**: 0.0.0.001 (según archivo `VERSION`)
 
 ## En qué estamos ahora
@@ -39,12 +39,23 @@ Este proyecto se encuentra en un **estado funcional básico** como parte del pro
   - Puerto Docker corregido (5433→5432 mapeado correctamente)
   - Base de datos con migraciones y seed ejecutados
   - Documentación (READMEs) actualizada con comandos correctos
-- **Sesión 2 (tarde)**: Tests E2E con Cypress
+
+- **Sesión 2 (tarde)**: Tests E2E con Cypress - Intento inicial
   - Implementados 14 tests E2E para Position Kanban Board
   - Configuración completa de Cypress 15.9.0
   - Comandos personalizados para drag & drop con react-beautiful-dnd
   - Scripts de ejecución (interactivo, headless, headed)
   - Documentación extensa en `cypress/README.md` y Memory Bank actualizado
+
+- **Sesión 3 (tarde)**: Corrección de tests E2E y hallazgos importantes
+  - ❌ Descubierto: react-beautiful-dnd incompatible con Cypress automático
+  - Instalado plugin `@4tw/cypress-drag-drop` (no resuelve incompatibilidad)
+  - 3 tests marcados como `.skip()` con explicaciones detalladas
+  - 11 tests activos funcionando correctamente (78% cobertura)
+  - README actualizado con limitaciones reales
+  - Documentación de alternativas (Playwright, pruebas manuales)
+  - Instrucciones añadidas para resetear BD antes de tests
+  - Memory Bank actualizado con hallazgos y lecciones aprendidas
 
 ## Enfoque actual: Programa educativo AI4Devs
 
@@ -303,25 +314,34 @@ Para que un agente pueda continuar trabajando efectivamente en este proyecto:
 
 ## Changelog del Memory Bank
 
-- **2026-01-19 (sesión 3 - tarde)**: Implementación de tests E2E con Cypress
+- **2026-01-19 (sesión 3 - tarde)**: Hallazgos sobre incompatibilidad de react-beautiful-dnd con Cypress
+  - ❌ Descubierto: react-beautiful-dnd no puede automatizarse en Cypress
+  - Instalado y probado plugin `@4tw/cypress-drag-drop` (no efectivo)
+  - 3 tests marcados como `.skip()` (drag & drop)
+  - Actualizado progress.md con sección de "Hallazgos importantes"
+  - Documentadas alternativas: Playwright, pruebas manuales, tests de API
+  - README de Cypress actualizado con limitaciones reales
+  - 11/14 tests E2E activos y funcionando (78% cobertura)
+  
+- **2026-01-19 (sesión 2 - tarde)**: Implementación de tests E2E con Cypress
   - Añadido item #2 "Implementar tests E2E básicos" como completado
   - Actualizada sección de limitaciones conocidas (tests E2E implementados)
   - Documentación completa de estrategia de testing E2E
   - Renumerados items de next steps (del 2 al 7)
   - Actualizado progress.md con nueva sección de Testing E2E
   
-- **2026-01-19 (sesión 2 - tarde)**: Actualización tras migración a pnpm y correcciones
+- **2026-01-19 (sesión 1 - mañana)**: Actualización tras migración a pnpm y correcciones
   - Marcado item #1 de prioridad alta como completado
   - Actualizado estado de infraestructura (ahora funcional)
   - Añadidas mejoras recientes en limitaciones conocidas
   - Renumerados items de next steps
   
-- **2026-01-19 (sesión 1 - mañana)**: Creación inicial del Memory Bank
+- **2026-01-19 (inicio de sesiones)**: Creación inicial del Memory Bank
   - Análisis completo del codebase
   - Documentación de estado actual
   - Identificación de next steps y riesgos
 
 ---
 
-**Última actualización**: 2026-01-19 (actualización tras setup completo)  
-**Próxima revisión sugerida**: Después de implementar autenticación o completar tests
+**Última actualización**: 2026-01-19 (sesión 3 - hallazgos sobre drag & drop testing)  
+**Próxima revisión sugerida**: Después de implementar autenticación o completar tests unitarios

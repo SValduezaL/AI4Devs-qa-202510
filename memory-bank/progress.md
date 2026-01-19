@@ -120,23 +120,26 @@
   - Datos de ejemplo cargados (3 candidatos, 2 posiciones, etc.)
 - **CI/CD**: ❌ NO implementado (solo mencionado en README)
 
-### Testing E2E - ✅ **NUEVO** (2026-01-19)
+### Testing E2E - ⚠️ **PARCIAL** (2026-01-19)
 
 - **Framework**: Cypress 15.9.0 ✅
-- **Suite implementada**: Position Kanban Board (14 tests) ✅
+- **Suite implementada**: Position Kanban Board (14 tests, 11 activos, 3 skip) ⚠️
   - `frontend/cypress/e2e/position-kanban.cy.js`
-  - Carga de página: 5 tests
-  - Drag & drop con validación backend: 2 tests
-  - Manejo de errores: 5 tests
-  - Navegación: 2 tests
-  - Panel de detalles: 1 test
+  - Carga de página: 5 tests ✅
+  - Drag & drop: 2 tests ⏭️ **SKIP** (incompatibilidad react-beautiful-dnd)
+  - Manejo de errores: 5 tests (4 activos ✅, 1 skip ⏭️)
+  - Navegación: 2 tests ✅
+  - Panel de detalles: 1 test ✅
 - **Comandos personalizados**: ✅
-  - `cy.dragAndDrop()` - Simula drag & drop con react-beautiful-dnd
+  - `cy.dragAndDrop()` - Implementado pero no funcional con react-beautiful-dnd
   - `cy.waitForBackend()` - Verifica backend disponible
   - `cy.visitPosition()` - Visita posición y espera carga completa
+- **Plugin instalado**: `@4tw/cypress-drag-drop` ⚠️ (no resuelve incompatibilidad)
 - **Configuración**: `frontend/cypress.config.js` ✅
 - **Scripts**: `cypress:open`, `cypress:run`, `test:e2e` ✅
 - **Documentación**: `frontend/cypress/README.md` ✅
+- **Cobertura activa**: 78% (11/14 tests pasan)
+- **Limitación conocida**: react-beautiful-dnd requiere interacción humana real, no puede automatizarse en Cypress
 
 ## ¿Qué falta? (TODOs detectados)
 
@@ -508,5 +511,57 @@ Ya está `api-spec.yaml`, solo falta exponerlo en `/api-docs`
 
 ---
 
-**Última actualización**: 2026-01-19 (actualización después de migración a pnpm)  
+**Última actualización**: 2026-01-19 (sesión 3 - hallazgos sobre testing E2E y drag & drop)  
 **Siguiente revisión**: Después de completar Sprint 1 del backlog
+
+---
+
+## Hallazgos importantes de esta sesión (2026-01-19 - Sesión 3)
+
+### ❌ Problema descubierto: react-beautiful-dnd incompatible con Cypress
+
+**Contexto**:
+- Se intentó implementar tests E2E para drag & drop en Position Kanban
+- Se instaló plugin `@4tw/cypress-drag-drop` (v2.3.1)
+- Se configuró el plugin en `cypress/support/e2e.js`
+- Se actualizaron 3 tests para usar el método `.drag()` del plugin
+
+**Resultado**:
+- ❌ Los tests **no funcionan**
+- El plugin simula eventos de mouse/drag pero react-beautiful-dnd no los reconoce
+- La librería requiere **interacción humana real** para funcionar
+- Es una limitación conocida de react-beautiful-dnd (ver issue #2350)
+
+**Impacto**:
+- 3 tests marcados como `.skip()` (no se ejecutan)
+- Cobertura E2E real: 78% (11/14 tests)
+- Drag & drop debe probarse manualmente o con herramientas alternativas
+
+**Alternativas evaluadas**:
+1. ❌ Plugin `@4tw/cypress-drag-drop` - No funciona
+2. ❌ Eventos nativos de Cypress (mousedown, dragstart, etc.) - No funciona
+3. ✅ Pruebas manuales - Funciona pero no automatizable
+4. ✅ Migración a Playwright - Mejor soporte (no implementado)
+5. ✅ Tests de API directos - Validar endpoint PUT sin UI (no implementado)
+
+**Decisión tomada**:
+- Mantener los 3 tests en `.skip()` con comentarios explicativos
+- Documentar limitación en README y Memory Bank
+- Los 11 tests restantes pasan correctamente
+
+**Archivos afectados**:
+- `frontend/cypress/e2e/position-kanban.cy.js` (3 tests con `.skip()`)
+- `frontend/cypress/README.md` (sección de limitaciones actualizada)
+- `frontend/cypress/support/e2e.js` (plugin importado pero inefectivo)
+- `frontend/package.json` (dependencia `@4tw/cypress-drag-drop` instalada)
+
+**Lecciones aprendidas**:
+1. Validar compatibilidad de librerías antes de implementar tests
+2. react-beautiful-dnd está diseñado específicamente para humanos
+3. Cypress tiene limitaciones con librerías que requieren timing exacto del navegador
+4. Documentar limitaciones es tan importante como documentar funcionalidad
+
+**Próximos pasos sugeridos**:
+1. Evaluar migración a Playwright si drag & drop testing es crítico
+2. Implementar tests de API directos para endpoint PUT /candidates/:id
+3. Mantener pruebas manuales de drag & drop como parte del QA
