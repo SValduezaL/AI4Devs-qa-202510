@@ -17,17 +17,20 @@
 - **Archivos test**: 0 encontrados ❌
 - **Comando**: `pnpm test`
 
-### E2E Tests ⚠️ **PARCIAL**
-- **Framework**: Cypress 15.9.0
+### E2E Tests ✅ **MIGRADO A PLAYWRIGHT**
+- **Framework**: Playwright 1.57.0 ✅ (migrado desde Cypress)
 - **Archivos test**: 1 suite implementada
-  - `cypress/e2e/position-kanban.cy.js` ⚠️ (14 tests: 11 activos ✅, 3 skip ⏭️)
-- **Cobertura activa**: Position Kanban Board (78% - 11/14 tests)
-- **Plugin instalado**: `@4tw/cypress-drag-drop` ⚠️ (no resuelve incompatibilidad)
+  - `playwright/tests/position-kanban.spec.ts` ✅ (15 tests: 100% activos)
+- **Cobertura**: Position Kanban Board (100% - 15/15 tests)
+- **Utilidades**: `PositionKanbanHelpers` class con drag & drop avanzado
 - **Comandos**:
-  - `pnpm run cypress:open` - Modo interactivo
-  - `pnpm run cypress:run` - Modo headless
-  - `pnpm run test:e2e` - Ejecutar suite específica
-- **Limitación conocida**: react-beautiful-dnd incompatible con Cypress automático
+  - `pnpm run test:e2e:pw` - Modo headless
+  - `pnpm run test:e2e:pw:ui` - Modo interactivo
+  - `pnpm run test:e2e:pw:headed` - Ver navegador
+  - `pnpm run test:e2e:pw:debug` - Debug paso a paso
+  - `pnpm run test:e2e:pw:report` - Ver reporte HTML
+- **Ventaja clave**: Drag & drop funciona con react-beautiful-dnd ✅
+- **Cypress**: Deprecado (pendiente eliminación)
 
 ## Ejecutar tests
 
@@ -249,47 +252,39 @@ cd frontend && pnpm run cypress:run
 
 ## Limitaciones conocidas de testing
 
-### Drag & Drop con react-beautiful-dnd ❌
+### Drag & Drop con react-beautiful-dnd ✅ **RESUELTO CON PLAYWRIGHT**
 
-**Problema descubierto** (2026-01-19):
-- react-beautiful-dnd **no puede automatizarse** en Cypress
-- La librería requiere interacción humana real para funcionar correctamente
-- Los eventos sintéticos de mouse/drag no son reconocidos por la librería
+**Problema original con Cypress** (2026-01-19):
+- react-beautiful-dnd **no podía automatizarse** en Cypress
+- La librería requería eventos de puntero precisos que Cypress no podía generar
+- Los eventos sintéticos de mouse/drag no eran reconocidos
 
-**Plugins probados sin éxito**:
-1. `@4tw/cypress-drag-drop` (v2.3.1) ❌
-   - Instalado y configurado correctamente
-   - Genera eventos de mouse/drag pero react-beautiful-dnd los ignora
-   - Es una limitación de la librería, no del plugin
+**Solución implementada** (2026-01-19):
+- ✅ **Migración completa a Playwright**
+- Playwright tiene control de bajo nivel sobre eventos del navegador
+- Técnica de movimiento incremental en pasos funciona con react-beautiful-dnd
+- Los 3 tests que estaban en skip ahora pasan correctamente
 
-2. Eventos nativos de Cypress ❌
-   - `trigger('mousedown')`, `trigger('dragstart')`, etc.
-   - Mismos resultados negativos
+**Cómo funciona en Playwright**:
+```typescript
+// Mover mouse en pasos incrementales (crítico para react-beautiful-dnd)
+for (let i = 1; i <= steps; i++) {
+  const x = sourceX + (destX - sourceX) * (i / steps);
+  const y = sourceY + (destY - sourceY) * (i / steps);
+  await page.mouse.move(x, y);
+  await page.waitForTimeout(50);
+}
+```
 
-**Impacto**:
-- 3 tests marcados como `.skip()`:
-  1. Test de actualización en backend mediante PUT
-  2. Test de movimiento visual del candidato
-  3. Test de manejo de error 400 al actualizar fase
-- Cobertura E2E efectiva: 78% (11/14 tests)
+**Resultado**:
+- ✅ 3 tests de drag & drop funcionando al 100%
+- ✅ 15/15 tests E2E pasan (con seed fresco)
+- ✅ Cobertura E2E: 100% del Position Kanban
 
-**Alternativas evaluadas**:
-
-| Alternativa | Estado | Pros | Contras |
-|------------|--------|------|---------|
-| Pruebas manuales | ✅ Funciona | Simple, verifica comportamiento real | No automatizable, requiere tiempo QA |
-| Playwright | 🔶 No implementado | Mejor soporte para drag & drop | Requiere migración de tests |
-| Tests de API | 🔶 No implementado | Valida lógica sin UI | No verifica interacción UI |
-| Puppeteer | 🔶 No evaluado | Posible mejor soporte | Similar a Cypress en limitaciones |
-
-**Decisión tomada**:
-- Mantener tests en `.skip()` con comentarios explicativos
-- Documentar limitación en README y Memory Bank
-- Continuar con pruebas manuales de drag & drop
-- Evaluar migración a Playwright si drag & drop testing se vuelve crítico
-
-**Referencia**:
-- [react-beautiful-dnd issue #2350](https://github.com/atlassian/react-beautiful-dnd/issues/2350)
+**Lecciones aprendidas**:
+1. No todas las herramientas E2E son equivalentes para casos específicos
+2. react-beautiful-dnd funciona mejor con Playwright que con Cypress
+3. Control manual del mouse es esencial para librerías DnD complejas
 
 ---
 
@@ -325,11 +320,21 @@ AssertionError: expected '<div.mb-4.card>' to contain 'Carlos García'
 
 ## Changelog
 
-- **2026-01-19 (sesión 3)**: Hallazgos sobre incompatibilidad de react-beautiful-dnd
+- **2026-01-19 (sesión 4 - tarde)**: Migración completa a Playwright
+  - ✅ Migrados 14 tests de Cypress a Playwright
+  - ✅ Implementados 3 tests de drag & drop (antes en skip)
+  - ✅ Creada clase `PositionKanbanHelpers` con método `dragAndDrop` avanzado
+  - ✅ Configuración completa de Playwright (`playwright.config.ts`)
+  - ✅ Scripts de package.json actualizados
+  - ✅ Documentación en `frontend/playwright/README.md`
+  - ✅ 15/15 tests pasando (requiere seed fresco)
+  - Cypress deprecado (pendiente eliminación)
+
+- **2026-01-19 (sesión 3)**: Hallazgos sobre incompatibilidad de react-beautiful-dnd con Cypress
   - ❌ Descubierto que react-beautiful-dnd no puede automatizarse en Cypress
   - Probado plugin `@4tw/cypress-drag-drop` (no efectivo)
   - 3 tests marcados como `.skip()` con explicaciones
-  - Documentadas alternativas y limitaciones
+  - Documentadas alternativas (motivó la migración a Playwright)
   - Añadidas instrucciones para resetear BD antes de tests
 
 - **2026-01-19 (sesión 2)**: Implementados tests E2E con Cypress para Position Kanban Board

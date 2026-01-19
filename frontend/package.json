@@ -31,10 +31,16 @@
     "build": "react-scripts build",
     "test": "jest --config jest.config.js",
     "eject": "react-scripts eject",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
-    "test:e2e": "cypress run --spec 'cypress/e2e/position-kanban.cy.js'",
-    "test:e2e:headed": "cypress run --spec 'cypress/e2e/position-kanban.cy.js' --headed --browser chrome"
+    "// cypress": "DEPRECATED - Migrado a Playwright. Usa test:e2e:pw",
+    "cypress:open": "echo DEPRECATED: Use 'pnpm run test:e2e:pw:ui' && exit 1",
+    "cypress:run": "echo DEPRECATED: Use 'pnpm run test:e2e:pw' && exit 1",
+    "test:e2e": "echo DEPRECATED: Use 'pnpm run test:e2e:pw' && exit 1",
+    "test:e2e:headed": "echo DEPRECATED: Use 'pnpm run test:e2e:pw:headed' && exit 1",
+    "test:e2e:pw": "playwright test",
+    "test:e2e:pw:ui": "playwright test --ui",
+    "test:e2e:pw:headed": "playwright test --headed",
+    "test:e2e:pw:debug": "playwright test --debug",
+    "test:e2e:pw:report": "playwright show-report"
   },
   "eslintConfig": {
     "extends": [
@@ -56,6 +62,7 @@
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.3.1",
+    "@playwright/test": "^1.57.0",
     "cypress": "^15.9.0"
   }
 }
