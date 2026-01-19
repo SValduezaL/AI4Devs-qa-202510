@@ -1,6 +1,7 @@
 {
     "name": "backend",
     "version": "1.0.0",
+    "packageManager": "pnpm@9.15.2",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
@@ -39,6 +40,7 @@
         "ts-jest": "^29.1.2",
         "ts-node": "^9.1.1",
         "ts-node-dev": "^1.1.6",
+        "tsx": "^4.21.0",
         "typescript": "^4.9.5"
     }
 }

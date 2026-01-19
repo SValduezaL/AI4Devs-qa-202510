@@ -103,13 +103,21 @@
 11. Application ✅
 12. Interview ✅
 
-### Infraestructura - ✅ Parcial
+### Infraestructura - ✅ Funcional
 
 - **Docker Compose**: PostgreSQL containerizado ✅
-- **Build backend**: `npm run build` funciona ✅
-- **Build frontend**: `npm run build` funciona ✅
+  - Puerto correctamente mapeado: 5433 (host) → 5432 (contenedor)
+- **Gestor de paquetes**: pnpm ✅
+  - Migrado desde npm
+  - Lockfiles actualizados (pnpm-lock.yaml)
+- **Build backend**: `pnpm run build` funciona ✅
+  - Errores TypeScript corregidos
+- **Build frontend**: `pnpm run build` funciona ✅
 - **Hot reload backend**: ts-node-dev configurado ✅
 - **Hot reload frontend**: react-scripts start funciona ✅
+- **Base de datos**: Migraciones aplicadas y seed ejecutado ✅
+  - 12 tablas creadas
+  - Datos de ejemplo cargados (3 candidatos, 2 posiciones, etc.)
 - **CI/CD**: ❌ NO implementado (solo mencionado en README)
 
 ## ¿Qué falta? (TODOs detectados)
@@ -300,25 +308,27 @@ Esto sugiere:
 
 Cambios de bajo esfuerzo y alto impacto:
 
-### 1. Especificar Node.js version (5 min)
+### 1. Especificar Node.js version (5 min) ⏳ PENDIENTE
 **Archivo**: `backend/package.json` y `frontend/package.json`
 ```json
 {
   "engines": {
     "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "pnpm": ">=9.0.0"
   }
 }
 ```
+**Nota**: Cambiar npm por pnpm en engines
 
-### 2. Pin versión de PostgreSQL (2 min)
+### 2. Pin versión de PostgreSQL (2 min) ⏳ PENDIENTE
 **Archivo**: `docker-compose.yml`
 ```yaml
 image: postgres:15-alpine
 ```
 
-### 3. Crear archivos .env.example (15 min)
-**Archivos**: `.env.example`, `backend/.env.example`, `frontend/.env.example`
+### 3. Crear archivos .env.example (15 min) ⚠️ PARCIAL
+**Estado**: Existe `.env.example` en root, falta en backend/ y frontend/
+**Archivos faltantes**: `backend/.env.example`, `frontend/.env.example`
 
 ### 4. Añadir health check endpoint (15 min)
 **Archivo**: `backend/src/index.ts`
@@ -374,7 +384,12 @@ Ya está `api-spec.yaml`, solo falta exponerlo en `/api-docs`
 ## Backlog priorizado (estimado)
 
 ### Sprint 1 (semana 1) - Fundamentos
-- [ ] Crear archivos .env.example (quick win #3)
+- [x] ~~Migrar a pnpm como gestor de paquetes~~ ✅ **COMPLETADO 2026-01-19**
+- [x] ~~Corregir errores TypeScript en build~~ ✅ **COMPLETADO 2026-01-19**
+- [x] ~~Corregir mapeo de puertos Docker~~ ✅ **COMPLETADO 2026-01-19**
+- [x] ~~Ejecutar migraciones y seed de BD~~ ✅ **COMPLETADO 2026-01-19**
+- [x] ~~Actualizar READMEs con instrucciones pnpm~~ ✅ **COMPLETADO 2026-01-19**
+- [ ] Crear archivos .env.example en backend/ y frontend/ (quick win #3) ⚠️ PARCIAL
 - [ ] Pin versiones de runtime (quick wins #1, #2, #9)
 - [ ] Añadir health check (quick win #4)
 - [ ] Implementar límites en uploads (quick win #5)
@@ -427,17 +442,48 @@ Ya está `api-spec.yaml`, solo falta exponerlo en `/api-docs`
 
 ## Último cambio significativo detectado
 
-**Evidencia más reciente**: Archivo VERSION con `0.0.0.001`
+**Fecha**: 2026-01-19
+
+**Cambios aplicados en esta sesión**:
+1. ✅ Migración completa de npm a pnpm
+   - Backend y frontend usando pnpm
+   - Especificado `packageManager` en package.json
+   - Lockfiles actualizados (pnpm-lock.yaml)
+   
+2. ✅ Corrección de errores TypeScript
+   - `positionService.ts`: Tipos explícitos en map callbacks
+   - `Candidate.ts`: Cambio de verificación de error Prisma por códigos de error
+   
+3. ✅ Corrección de Docker
+   - Mapeo de puertos corregido: `${DB_PORT}:5432` (ahora 5433→5432)
+   - Base de datos accesible desde localhost:5433
+   
+4. ✅ Setup completo de base de datos
+   - Prisma client generado
+   - 4 migraciones aplicadas exitosamente
+   - Seed ejecutado con tsx (datos de ejemplo cargados)
+   - 12 tablas con datos verificados
+   
+5. ✅ Instalación de nueva dependencia
+   - `tsx@4.21.0` añadido como dev dependency
+   - Reemplaza `ts-node` para ejecutar seed (mejor compatibilidad)
+   
+6. ✅ Documentación actualizada
+   - README.md principal actualizado con instrucciones pnpm
+   - frontend/README.md actualizado con comandos pnpm
+   - Sección "First Steps" reescrita con pasos claros
+   - Puerto correcto (5433) documentado
 
 **Estado del repo**: 
-- Estructura completa de carpetas
-- Funcionalidad básica implementada
-- Documentación de buenas prácticas añadida
-- Listo para expansión
+- ✅ Build exitoso sin errores
+- ✅ Base de datos funcional con datos de ejemplo
+- ✅ Gestor de paquetes moderno (pnpm)
+- ✅ Documentación sincronizada con setup real
+- ⏳ Listo para desarrollo de nuevas features
 
 **Próximo hito sugerido**: Completar testing + implementar autenticación básica
 
 ---
 
-**Última actualización**: 2026-01-19 (creación del Memory Bank)  
+**Última actualización**: 2026-01-19 (actualización después de migración a pnpm)  
 **Siguiente revisión**: Después de completar Sprint 1 del backlog

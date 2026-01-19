@@ -41,7 +41,8 @@
 
 #### Build y desarrollo
 - **ts-node**: 9.1.1 - Ejecución directa de TS
-- **ts-node-dev**: 1.1.6 - Hot reload en desarrollo
+- **tsx**: 4.21.0 - Runtime TypeScript moderno (usado para ejecutar seed)
+- **ts-node-dev**: 1.1.8 - Hot reload en desarrollo
 - **typescript**: 4.9.5 - Compilador
 
 ### Frontend
@@ -90,7 +91,10 @@
 
 #### Motor
 - **PostgreSQL**: Versión UNKNOWN (no especificada en docker-compose.yml)
-- **Puerto**: 5432 (configurable con DB_PORT)
+- **Puerto**: 
+  - Puerto interno del contenedor: 5432
+  - Puerto expuesto en host: 5433 (configurable con `DB_PORT`)
+  - Mapeo: `${DB_PORT}:5432` en docker-compose.yml
 - **Imagen Docker**: `postgres` (latest implícito)
   - ⚠️ **Riesgo**: Sin tag de versión, puede cambiar
 
@@ -108,11 +112,12 @@
 - **Servicio**: Solo PostgreSQL (backend y frontend NO containerizados)
 
 #### Gestión de dependencias
-- **npm**: Backend y frontend usan npm (no yarn/pnpm)
+- **pnpm**: Backend y frontend usan pnpm (migrado desde npm)
+  - Versión especificada en package.json: `"packageManager": "pnpm@9.15.2"`
 - **Lockfiles**: 
-  - `backend/package-lock.json`: Presente
-  - `frontend/package-lock.json`: Presente
-  - `package-lock.json` (root): Presente (solo dotenv)
+  - `backend/pnpm-lock.yaml`: Presente
+  - `frontend/pnpm-lock.yaml`: Presente
+  - Archivos `package-lock.json` eliminados después de migración
 
 ## Setup local exacto
 
@@ -120,7 +125,7 @@
 ```bash
 # Instalar (versiones no especificadas en repo)
 - Node.js (recomendado: LTS 18.x o superior)
-- npm (incluido con Node.js)
+- pnpm (instalar con: npm install -g pnpm)
 - Docker Desktop o Docker Engine + Docker Compose
 - Git
 ```
@@ -135,22 +140,19 @@ cd AI4Devs-qa-202510
 
 #### 2. Instalar dependencias
 
-**Root** (opcional, solo para dotenv):
-```bash
-npm install
-```
-
 **Backend**:
 ```bash
 cd backend
-npm install
+pnpm install
 ```
 
 **Frontend**:
 ```bash
 cd frontend
-npm install
+pnpm install
 ```
+
+**Nota**: No es necesario instalar dependencias en root, el proyecto ya no usa npm.
 
 #### 3. Configurar variables de entorno
 
@@ -160,13 +162,15 @@ npm install
 DB_USER=postgres
 DB_PASSWORD=password
 DB_NAME=mydatabase
-DB_PORT=5432
+DB_HOST=localhost
+DB_PORT=5433
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 ```
 
-**Backend** (`.env` en `backend/`):
+**Backend** (`.env` copiado desde root o con las mismas variables):
 ```env
 # Connection string para Prisma
-DATABASE_URL=postgresql://postgres:password@localhost:5432/mydatabase
+DATABASE_URL=postgresql://postgres:password@localhost:5433/mydatabase
 
 # Puerto del backend
 BACKEND_PORT=3010
@@ -201,10 +205,12 @@ docker ps
 
 Desde `backend/`:
 ```bash
-npx prisma generate       # Genera cliente Prisma
-npx prisma migrate dev    # Aplica migraciones
-npx ts-node prisma/seed.ts  # Carga datos de ejemplo
+pnpm prisma generate         # Genera cliente Prisma
+pnpm prisma migrate dev      # Aplica migraciones
+pnpm exec tsx prisma/seed.ts # Carga datos de ejemplo
 ```
+
+**Nota**: Se usa `tsx` en lugar de `ts-node` por mejor compatibilidad con TypeScript moderno. Si `prisma generate` falla por bloqueo de OneDrive en node_modules, el cliente probablemente ya está generado y se puede continuar con las migraciones.
 
 **Datos de ejemplo cargados**:
 - 1 Empresa: LTI
@@ -220,14 +226,14 @@ npx ts-node prisma/seed.ts  # Carga datos de ejemplo
 **Desarrollo** (con hot reload):
 ```bash
 cd backend
-npm run dev
+pnpm run dev
 ```
 
 **Producción** (compilado):
 ```bash
 cd backend
-npm run build   # Genera dist/
-npm start       # Ejecuta dist/index.js
+pnpm run build   # Genera dist/
+pnpm start       # Ejecuta dist/index.js
 ```
 
 Backend disponible en: `http://localhost:3010`
@@ -237,7 +243,7 @@ Backend disponible en: `http://localhost:3010`
 **Desarrollo**:
 ```bash
 cd frontend
-npm start
+pnpm start
 ```
 
 Frontend disponible en: `http://localhost:3000`
@@ -245,7 +251,7 @@ Frontend disponible en: `http://localhost:3000`
 **Producción** (build):
 ```bash
 cd frontend
-npm run build   # Genera build/
+pnpm run build   # Genera build/
 # Servir con servidor estático (nginx, serve, etc.)
 ```
 
@@ -463,11 +469,19 @@ Según browserslist en `frontend/package.json`:
 **Problema**: No hay script para `prisma migrate deploy`  
 **Impacto**: Deploy manual de migraciones  
 
+## Changelog
+
+- **2026-01-19**: Migración de npm a pnpm como gestor de paquetes
+- **2026-01-19**: Corrección de mapeo de puertos Docker (ahora expone 5433 correctamente)
+- **2026-01-19**: Añadida dependencia `tsx` para ejecución de TypeScript (usado en seed)
+- **2026-01-19**: Actualización de documentación (READMEs) con comandos pnpm
+- **2026-01-19**: Verificación de migraciones y seed ejecutados correctamente
+
 ## Preguntas al humano sobre tech stack
 
 1. ¿Cuál es la versión de Node.js requerida/recomendada?
 2. ¿Se planea actualizar TypeScript a 5.x?
-3. ¿Por qué no se usa npm workspaces para monorepo?
+3. ¿Por qué migrar de npm a pnpm? (ventajas: espacio en disco, velocidad, strict)
 4. ¿Hay planes de migrar a Vite en lugar de CRA?
 5. ¿Se necesita Redis para caching?
 6. ¿Qué estrategia de versionado de API se usará?

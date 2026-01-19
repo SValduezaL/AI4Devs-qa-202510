@@ -3,6 +3,7 @@
 ## Estado actual del proyecto
 
 **Fecha de creación de Memory Bank**: 2026-01-19  
+**Última actualización**: 2026-01-19 (migración a pnpm y correcciones)  
 **Versión del proyecto**: 0.0.0.001 (según archivo `VERSION`)
 
 ## En qué estamos ahora
@@ -29,6 +30,13 @@ Este proyecto se encuentra en un **estado funcional básico** como parte del pro
 - Tests incompletos (solo 2 archivos de test en backend)
 - Sin CI/CD real (mencionado en README pero no implementado)
 - Documentación dispersa en varios archivos
+
+✅ **Mejoras recientes** (2026-01-19):
+- Migrado a pnpm como gestor de paquetes (mejor performance y disk space)
+- Errores TypeScript corregidos (build exitoso)
+- Puerto Docker corregido (5433→5432 mapeado correctamente)
+- Base de datos con migraciones y seed ejecutados
+- Documentación (READMEs) actualizada con comandos correctos
 
 ## Enfoque actual: Programa educativo AI4Devs
 
@@ -74,7 +82,16 @@ Basado en el estado actual, estos son los siguientes pasos lógicos (ordenados p
 
 ### Prioridad ALTA (Critical Path)
 
-#### 1. Implementar capa de repositorio real
+#### ✅ 1. Corregir setup de desarrollo - **COMPLETADO**
+~~**Por qué**: Build fallaba, Docker mal configurado~~  
+**Completado**: 2026-01-19
+- Migrado a pnpm
+- Errores TypeScript corregidos
+- Puerto Docker corregido
+- Base de datos operativa
+- READMEs actualizados
+
+#### 2. Implementar capa de repositorio real
 **Por qué**: Viola principios DDD y dificulta testing  
 **Archivos a crear**:
 - `backend/src/infrastructure/repositories/ICandidateRepository.ts` (interface)
@@ -85,7 +102,7 @@ Basado en el estado actual, estos son los siguientes pasos lógicos (ordenados p
 **Riesgo**: Alto (refactor significativo)  
 **Beneficio**: Desacoplar dominio de infraestructura, facilitar testing
 
-#### 2. Completar tests unitarios
+#### 3. Completar tests unitarios
 **Por qué**: Cobertura muy baja (solo 2 archivos)  
 **Tests faltantes**:
 - `positionService.test.ts` (existe pero UNKNOWN contenido)
@@ -97,18 +114,17 @@ Basado en el estado actual, estos son los siguientes pasos lógicos (ordenados p
 **Riesgo**: Bajo  
 **Beneficio**: Confianza en cambios, documentación viva
 
-#### 3. Añadir variables de entorno documentadas
-**Por qué**: No hay archivos `.env.example`  
+#### 4. Añadir variables de entorno documentadas
+**Por qué**: Solo hay `.env.example` en root  
 **Archivos a crear**:
-- `.env.example` (root)
-- `backend/.env.example`
-- `frontend/.env.example`
+- `backend/.env.example` ⚠️ FALTANTE
+- `frontend/.env.example` ⚠️ FALTANTE
 
-**Esfuerzo**: ~30 minutos  
+**Esfuerzo**: ~15 minutos  
 **Riesgo**: Ninguno  
 **Beneficio**: Onboarding más rápido, menos errores de setup
 
-#### 4. Implementar autenticación básica
+#### 5. Implementar autenticación básica
 **Por qué**: Riesgo de seguridad crítico  
 **Opciones**:
 - JWT con Passport.js
@@ -119,7 +135,7 @@ Basado en el estado actual, estos son los siguientes pasos lógicos (ordenados p
 **Riesgo**: Medio (cambios en muchos puntos)  
 **Beneficio**: Seguridad, separación de usuarios
 
-#### 5. Configurar CI/CD real
+#### 6. Configurar CI/CD real
 **Por qué**: Mencionado en README pero no existe  
 **Archivos a crear**:
 - `.github/workflows/backend-ci.yml`
@@ -132,23 +148,23 @@ Basado en el estado actual, estos son los siguientes pasos lógicos (ordenados p
 
 ### Prioridad MEDIA (Mejoras importantes)
 
-#### 6. Implementar manejo de transacciones
+#### 7. Implementar manejo de transacciones
 **Ejemplo**: Crear candidato + educations + workExperiences de forma atómica  
 **Esfuerzo**: ~2-3 horas
 
-#### 7. Añadir paginación en endpoints de lista
+#### 8. Añadir paginación en endpoints de lista
 **Endpoints afectados**: `/positions`, `/positions/{id}/candidates`  
 **Esfuerzo**: ~2 horas
 
-#### 8. Implementar logging estructurado
+#### 9. Implementar logging estructurado
 **Librería sugerida**: Winston o Pino  
 **Esfuerzo**: ~3 horas
 
-#### 9. Añadir validación con librería
+#### 10. Añadir validación con librería
 **Reemplazar**: `validator.ts` manual por Zod o Yup  
 **Esfuerzo**: ~4 horas
 
-#### 10. Crear documentación de API interactiva
+#### 11. Crear documentación de API interactiva
 **Herramienta**: Swagger UI (librerías ya instaladas)  
 **Archivos**: Integrar `api-spec.yaml` con Express  
 **Esfuerzo**: ~1-2 horas
@@ -268,7 +284,20 @@ Para que un agente pueda continuar trabajando efectivamente en este proyecto:
 5. **Planificar** spikes técnicos para items de riesgo alto
 6. **Actualizar** `activeContext.md` y `progress.md` después de cada sesión
 
+## Changelog del Memory Bank
+
+- **2026-01-19 (tarde)**: Actualización tras migración a pnpm y correcciones
+  - Marcado item #1 de prioridad alta como completado
+  - Actualizado estado de infraestructura (ahora funcional)
+  - Añadidas mejoras recientes en limitaciones conocidas
+  - Renumerados items de next steps
+  
+- **2026-01-19 (mañana)**: Creación inicial del Memory Bank
+  - Análisis completo del codebase
+  - Documentación de estado actual
+  - Identificación de next steps y riesgos
+
 ---
 
-**Última actualización**: 2026-01-19 (creación inicial del Memory Bank)  
-**Próxima revisión sugerida**: Después de implementar primeros 5 items de prioridad alta
+**Última actualización**: 2026-01-19 (actualización tras setup completo)  
+**Próxima revisión sugerida**: Después de implementar autenticación o completar tests

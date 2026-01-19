@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
+  "packageManager": "pnpm@9.15.2",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",

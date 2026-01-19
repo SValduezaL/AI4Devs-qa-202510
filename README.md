@@ -54,37 +54,110 @@ The description and diagram of the data model are in [ModeloDatos.md](./backend/
 
 To get started with this project, follow these steps:
 
-1. Clone the repo
-2. install the dependencias for frontend and backend
+### Prerequisites
+
+- Node.js v16 or higher
+- pnpm (install with `npm install -g pnpm`)
+- Docker and Docker Compose
+
+### 1. Clone the repository
+
+```sh
+git clone <repository-url>
+cd AI4Devs-qa-202510
+```
+
+### 2. Configure environment variables
+
+Create a `.env` file in the root directory with the following content:
+
+```env
+# Database
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=your_db_name
+DB_HOST=localhost
+DB_PORT=5433
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+# Backend
+BACKEND_PORT=3010
+BACKEND_HOST=localhost
+NODE_ENV=development
+
+# Frontend
+FRONTEND_PORT=3000
+REACT_APP_API_URL=http://localhost:3010
+
+# CORS
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+### 3. Start PostgreSQL with Docker
+
+```sh
+docker-compose up -d
+```
+
+### 4. Install dependencies
+
+```sh
+# Install frontend dependencies
+cd frontend
+pnpm install
+
+# Install backend dependencies
+cd ../backend
+pnpm install
+```
+
+### 5. Setup database with Prisma
+
+```sh
+cd backend
+
+# Generate Prisma client
+pnpm prisma generate
+
+# Run migrations
+pnpm prisma migrate dev
+
+# Seed database with sample data
+pnpm exec tsx prisma/seed.ts
+```
+
+### 6. Build and start the backend
+
+```sh
+cd backend
+pnpm run build
+pnpm start
+```
+
+The backend server will be running at http://localhost:3010
+
+### 7. Start the frontend (in a new terminal)
+
 ```sh
 cd frontend
-npm install
-
-cd ../backend
-npm install
-```
-3. Build the backend server
-```
-cd backend
-npm run build
-````
-4. Run the backend server
-```
-cd backend
-npm start
-```
-5. In a new terminal window, build the frontend server:
-```
-cd frontend
-npm run build
-```
-6. Start the frontend server
-```
-cd frontend
-npm start
+pnpm start
 ```
 
-The backend server will be running at http://localhost:3010, and the frontend will be available at http://localhost:3000.
+The frontend will be available at http://localhost:3000
+
+### Alternative: Development mode with hot-reload
+
+**Backend (in one terminal):**
+```sh
+cd backend
+pnpm run dev
+```
+
+**Frontend (in another terminal):**
+```sh
+cd frontend
+pnpm start
+```
 
 ## Docker y PostgreSQL
 
@@ -99,15 +172,13 @@ docker-compose up -d
 
 This will start a PostgreSQL database in a Docker container. The -d flag runs the container in detached mode, meaning it runs in the background.
 
-To access the PostgreSQL database, you can use any PostgreSQL client with the following connection details:
+To access the PostgreSQL database, you can use any PostgreSQL client (like DBeaver or pgAdmin) with the connection details specified in your `.env` file:
 
 - Host: localhost
-- Port: 5432
-- User: postgres
-- Password: password
-- Database: mydatabase
-
-Please replace User, Password, and Database with the actual user, password, and database name specified in your .env file.
+- Port: 5433 (as configured in docker-compose.yml)
+- User: value of `DB_USER` from .env
+- Password: value of `DB_PASSWORD` from .env
+- Database: value of `DB_NAME` from .env
 
 To stop the Docker container, run the following command:
 ```
@@ -116,17 +187,27 @@ docker-compose down
 
 To generate the database using Prisma, follow these steps:
 
-Make sure the `.env` file in the root directory of the backend contains the `DATABASE_URL` variable with the correct connection string to your PostgreSQL database. If it doesn't work, try replacing the full URL directly in `schema.prisma`, in the `url` variable.
+1. Make sure the `.env` file exists in the root directory with the `DATABASE_URL` variable and correct connection string to your PostgreSQL database.
 
-Open a terminal and navigate to the backend directory where the schema.prisma and seed.ts files are located.
-
-Run the following commands to generate the Prisma structure, apply migrations to your database, and populate it with example data:
-
+2. If Prisma can't find the .env file, copy it to the backend directory:
+```sh
+cp .env backend/.env
 ```
-npx prisma generate
-npx prisma migrate dev
-ts-node seed.ts
+
+3. Open a terminal and navigate to the backend directory:
+```sh
+cd backend
 ```
+
+4. Run the following commands to generate the Prisma client, apply migrations, and populate the database with sample data:
+
+```sh
+pnpm prisma generate
+pnpm prisma migrate dev
+pnpm exec tsx prisma/seed.ts
+```
+
+**Note:** We use `tsx` instead of `ts-node` for better TypeScript compatibility. If you encounter issues with `prisma generate` due to OneDrive syncing files in `node_modules`, the client is likely already generated and you can proceed with the migrations.
 
 Once you have completed all the steps, you should be able to save new candidates, both via the web and API, view them in the database, and retrieve them via GET by ID.
 
@@ -185,10 +266,11 @@ To run this project on an EC2 instance and ensure GitHub Actions works correctly
     ```
     ssh -i your-key.pem ec2-user@your-ec2-public-ip
     ```
-  - Install Node.js and npm:
+  - Install Node.js, npm, and pnpm:
     ```
     curl -sL https://rpm.nodesource.com/setup_16.x | sudo bash -
     sudo yum install -y nodejs
+    sudo npm install -g pnpm
     ```
   - Install PM2 to manage your application:
     ```
@@ -313,37 +395,110 @@ La descripción y diagrama del modelo de datos los tienes en [ModeloDatos.md](./
 
 Para comenzar con este proyecto, sigue estos pasos:
 
-1. Clona el repositorio.
-2. Instala las dependencias para el frontend y el backend:
+### Prerequisitos
+
+- Node.js v16 o superior
+- pnpm (instalar con `npm install -g pnpm`)
+- Docker y Docker Compose
+
+### 1. Clonar el repositorio
+
+```sh
+git clone <repository-url>
+cd AI4Devs-qa-202510
+```
+
+### 2. Configurar variables de entorno
+
+Crea un archivo `.env` en el directorio raíz con el siguiente contenido:
+
+```env
+# Base de datos
+DB_USER=tu_usuario
+DB_PASSWORD=tu_contraseña
+DB_NAME=tu_base_datos
+DB_HOST=localhost
+DB_PORT=5433
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+# Backend
+BACKEND_PORT=3010
+BACKEND_HOST=localhost
+NODE_ENV=development
+
+# Frontend
+FRONTEND_PORT=3000
+REACT_APP_API_URL=http://localhost:3010
+
+# CORS
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+### 3. Iniciar PostgreSQL con Docker
+
+```sh
+docker-compose up -d
+```
+
+### 4. Instalar dependencias
+
+```sh
+# Instalar dependencias del frontend
+cd frontend
+pnpm install
+
+# Instalar dependencias del backend
+cd ../backend
+pnpm install
+```
+
+### 5. Configurar la base de datos con Prisma
+
+```sh
+cd backend
+
+# Generar cliente de Prisma
+pnpm prisma generate
+
+# Ejecutar migraciones
+pnpm prisma migrate dev
+
+# Poblar base de datos con datos de ejemplo
+pnpm exec tsx prisma/seed.ts
+```
+
+### 6. Compilar e iniciar el backend
+
+```sh
+cd backend
+pnpm run build
+pnpm start
+```
+
+El servidor backend estará corriendo en http://localhost:3010
+
+### 7. Iniciar el frontend (en una nueva terminal)
+
 ```sh
 cd frontend
-npm install
-
-cd ../backend
-npm install
-```
-3. Construye el servidor backend:
-```
-cd backend
-npm run build
-````
-4. Inicia el servidor backend:
-```
-cd backend
-npm start
-```
-5. En una nueva ventana de terminal, construye el servidor frontend:
-```
-cd frontend
-npm run build
-```
-6. Inicia el servidor frontend:
-```
-cd frontend
-npm start
+pnpm start
 ```
 
-El servidor backend estará corriendo en http://localhost:3010 y el frontend estará disponible en http://localhost:3000.
+El frontend estará disponible en http://localhost:3000
+
+### Alternativa: Modo desarrollo con recarga automática
+
+**Backend (en una terminal):**
+```sh
+cd backend
+pnpm run dev
+```
+
+**Frontend (en otra terminal):**
+```sh
+cd frontend
+pnpm start
+```
 
 ## Docker y PostgreSQL
 
@@ -357,14 +512,13 @@ docker-compose up -d
 ```
 Esto iniciará una base de datos PostgreSQL en un contenedor Docker. La bandera -d corre el contenedor en modo separado, lo que significa que se ejecuta en segundo plano.
 
-Para acceder a la base de datos PostgreSQL, puedes usar cualquier cliente PostgreSQL con los siguientes detalles de conexión:
-- Host: localhost
-- Port: 5432
-- User: postgres
-- Password: password
-- Database: mydatabase
+Para acceder a la base de datos PostgreSQL, puedes usar cualquier cliente PostgreSQL (como DBeaver o pgAdmin) con los detalles de conexión especificados en tu archivo `.env`:
 
-Por favor, reemplaza User, Password y Database con el usuario, la contraseña y el nombre de la base de datos reales especificados en tu archivo .env.
+- Host: localhost
+- Port: 5433 (como está configurado en docker-compose.yml)
+- User: valor de `DB_USER` del .env
+- Password: valor de `DB_PASSWORD` del .env
+- Database: valor de `DB_NAME` del .env
 
 Para detener el contenedor Docker, ejecuta el siguiente comando:
 ```
@@ -373,16 +527,27 @@ docker-compose down
 
 Para generar la base de datos utilizando Prisma, sigue estos pasos:
 
-1. Asegúrate de que el archivo `.env` en el directorio raíz del backend contenga la variable `DATABASE_URL` con la cadena de conexión correcta a tu base de datos PostgreSQL. Si no te funciona, prueba a reemplazar la URL completa directamente en `schema.prisma`, en la variable `url`.
+1. Asegúrate de que el archivo `.env` exista en el directorio raíz con la variable `DATABASE_URL` y la cadena de conexión correcta a tu base de datos PostgreSQL.
 
-2. Abre una terminal y navega al directorio del backend donde se encuentra el archivo `schema.prisma` y `seed.ts`.
+2. Si Prisma no puede encontrar el archivo .env, cópialo al directorio backend:
+```sh
+cp .env backend/.env
+```
 
-3. Ejecuta los siguientes comandos para generar la estructura de prisma, las migraciones a tu base de datos y poblarla con datos de ejemplo:
+3. Abre una terminal y navega al directorio del backend:
+```sh
+cd backend
 ```
-npx prisma generate
-npx prisma migrate dev
-ts-node seed.ts
+
+4. Ejecuta los siguientes comandos para generar el cliente de Prisma, aplicar migraciones y poblar la base de datos con datos de ejemplo:
+
+```sh
+pnpm prisma generate
+pnpm prisma migrate dev
+pnpm exec tsx prisma/seed.ts
 ```
+
+**Nota:** Usamos `tsx` en lugar de `ts-node` para mejor compatibilidad con TypeScript. Si encuentras problemas con `prisma generate` debido a OneDrive sincronizando archivos en `node_modules`, es probable que el cliente ya esté generado y puedes continuar con las migraciones.
 
 Una vez has dado todos los pasos, deberías poder guardar nuevos candidatos, tanto via web, como via API, verlos en la base de datos y obtenerlos mediante GET por id.
 
@@ -442,10 +607,11 @@ Para ejecutar este proyecto en una instancia EC2 y asegurarte de que GitHub Acti
     ```
     ssh -i your-key.pem ec2-user@your-ec2-public-ip
     ```
-  - Instala Node.js y npm:
+  - Instala Node.js, npm y pnpm:
     ```
     curl -sL https://rpm.nodesource.com/setup_16.x | sudo bash -
     sudo yum install -y nodejs
+    sudo npm install -g pnpm
     ```
   - Instala PM2 para gestionar tu aplicación:
     ```
