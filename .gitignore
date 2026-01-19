@@ -57,6 +57,15 @@
 **/htmlcov/
 
 # ============================================
+# Cypress E2E Testing
+# ============================================
+**/cypress/videos/
+**/cypress/screenshots/
+**/cypress/downloads/
+**/cypress/results/
+**/.cypress_cache/
+
+# ============================================
 # LOGS
 # ============================================
 npm-debug.log*

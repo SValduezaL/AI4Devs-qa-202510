@@ -30,7 +30,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest --config jest.config.js",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:e2e": "cypress run --spec 'cypress/e2e/position-kanban.cy.js'",
+    "test:e2e:headed": "cypress run --spec 'cypress/e2e/position-kanban.cy.js' --headed --browser chrome"
   },
   "eslintConfig": {
     "extends": [

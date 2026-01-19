@@ -120,6 +120,24 @@
   - Datos de ejemplo cargados (3 candidatos, 2 posiciones, etc.)
 - **CI/CD**: ❌ NO implementado (solo mencionado en README)
 
+### Testing E2E - ✅ **NUEVO** (2026-01-19)
+
+- **Framework**: Cypress 15.9.0 ✅
+- **Suite implementada**: Position Kanban Board (14 tests) ✅
+  - `frontend/cypress/e2e/position-kanban.cy.js`
+  - Carga de página: 5 tests
+  - Drag & drop con validación backend: 2 tests
+  - Manejo de errores: 5 tests
+  - Navegación: 2 tests
+  - Panel de detalles: 1 test
+- **Comandos personalizados**: ✅
+  - `cy.dragAndDrop()` - Simula drag & drop con react-beautiful-dnd
+  - `cy.waitForBackend()` - Verifica backend disponible
+  - `cy.visitPosition()` - Visita posición y espera carga completa
+- **Configuración**: `frontend/cypress.config.js` ✅
+- **Scripts**: `cypress:open`, `cypress:run`, `test:e2e` ✅
+- **Documentación**: `frontend/cypress/README.md` ✅
+
 ## ¿Qué falta? (TODOs detectados)
 
 ### TODOs explícitos en código
@@ -396,8 +414,13 @@ Ya está `api-spec.yaml`, solo falta exponerlo en `/api-docs`
 - [ ] Crear CONTRIBUTING.md (quick win #8)
 
 ### Sprint 2 (semana 2) - Testing
-- [ ] Completar tests de candidateService
-- [ ] Completar tests de positionService
+- [x] ~~Implementar tests E2E para Position Kanban~~ ✅ **COMPLETADO 2026-01-19**
+  - 14 tests implementados con Cypress
+  - Cobertura completa de happy path y errores
+  - Comandos personalizados para drag & drop
+  - Documentación completa
+- [ ] Completar tests unitarios de candidateService
+- [ ] Completar tests unitarios de positionService
 - [ ] Añadir tests de controllers
 - [ ] Añadir tests de validators
 - [ ] Setup test coverage reporting
@@ -431,9 +454,9 @@ Ya está `api-spec.yaml`, solo falta exponerlo en `/api-docs`
 - **Ops/Deployment**: ~30% ⚠️
 
 ### Cobertura de tests (estimado)
-- **Backend**: <30%
-- **Frontend**: 0%
-- **E2E**: 0%
+- **Backend unitarios**: ~20-30%
+- **Frontend unitarios**: 0%
+- **E2E**: Position Kanban (100%), otros flujos (0%)
 
 ### Calidad de código
 - **TypeScript**: ✅ Compilación sin errores

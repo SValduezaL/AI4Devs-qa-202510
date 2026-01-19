@@ -3,7 +3,7 @@
 ## Estado actual del proyecto
 
 **Fecha de creación de Memory Bank**: 2026-01-19  
-**Última actualización**: 2026-01-19 (migración a pnpm y correcciones)  
+**Última actualización**: 2026-01-19 (tests E2E con Cypress)  
 **Versión del proyecto**: 0.0.0.001 (según archivo `VERSION`)
 
 ## En qué estamos ahora
@@ -27,16 +27,24 @@ Este proyecto se encuentra en un **estado funcional básico** como parte del pro
 
 ⚠️ **Limitaciones conocidas**:
 - Sin autenticación ni autorización
-- Tests incompletos (solo 2 archivos de test en backend)
+- Tests unitarios incompletos (backend ~30%, frontend 0%)
+- Tests E2E solo para Position Kanban (otros flujos pendientes)
 - Sin CI/CD real (mencionado en README pero no implementado)
-- Documentación dispersa en varios archivos
+- Documentación consolidada en Memory Bank pero aún en evolución
 
 ✅ **Mejoras recientes** (2026-01-19):
-- Migrado a pnpm como gestor de paquetes (mejor performance y disk space)
-- Errores TypeScript corregidos (build exitoso)
-- Puerto Docker corregido (5433→5432 mapeado correctamente)
-- Base de datos con migraciones y seed ejecutados
-- Documentación (READMEs) actualizada con comandos correctos
+- **Sesión 1 (mañana)**: Setup y correcciones
+  - Migrado a pnpm como gestor de paquetes (mejor performance y disk space)
+  - Errores TypeScript corregidos (build exitoso)
+  - Puerto Docker corregido (5433→5432 mapeado correctamente)
+  - Base de datos con migraciones y seed ejecutados
+  - Documentación (READMEs) actualizada con comandos correctos
+- **Sesión 2 (tarde)**: Tests E2E con Cypress
+  - Implementados 14 tests E2E para Position Kanban Board
+  - Configuración completa de Cypress 15.9.0
+  - Comandos personalizados para drag & drop con react-beautiful-dnd
+  - Scripts de ejecución (interactivo, headless, headed)
+  - Documentación extensa en `cypress/README.md` y Memory Bank actualizado
 
 ## Enfoque actual: Programa educativo AI4Devs
 
@@ -84,14 +92,23 @@ Basado en el estado actual, estos son los siguientes pasos lógicos (ordenados p
 
 #### ✅ 1. Corregir setup de desarrollo - **COMPLETADO**
 ~~**Por qué**: Build fallaba, Docker mal configurado~~  
-**Completado**: 2026-01-19
+**Completado**: 2026-01-19 (Sesión 1)
 - Migrado a pnpm
 - Errores TypeScript corregidos
 - Puerto Docker corregido
 - Base de datos operativa
 - READMEs actualizados
 
-#### 2. Implementar capa de repositorio real
+#### ✅ 2. Implementar tests E2E básicos - **COMPLETADO**
+~~**Por qué**: Sin cobertura E2E, riesgo de regresiones~~  
+**Completado**: 2026-01-19 (Sesión 2)
+- 14 tests E2E para Position Kanban Board
+- Cypress configurado y documentado
+- Comandos personalizados para drag & drop
+- Scripts de ejecución listos
+- Documentación completa
+
+#### 3. Implementar capa de repositorio real
 **Por qué**: Viola principios DDD y dificulta testing  
 **Archivos a crear**:
 - `backend/src/infrastructure/repositories/ICandidateRepository.ts` (interface)
@@ -102,7 +119,7 @@ Basado en el estado actual, estos son los siguientes pasos lógicos (ordenados p
 **Riesgo**: Alto (refactor significativo)  
 **Beneficio**: Desacoplar dominio de infraestructura, facilitar testing
 
-#### 3. Completar tests unitarios
+#### 4. Completar tests unitarios
 **Por qué**: Cobertura muy baja (solo 2 archivos)  
 **Tests faltantes**:
 - `positionService.test.ts` (existe pero UNKNOWN contenido)
@@ -124,7 +141,7 @@ Basado en el estado actual, estos son los siguientes pasos lógicos (ordenados p
 **Riesgo**: Ninguno  
 **Beneficio**: Onboarding más rápido, menos errores de setup
 
-#### 5. Implementar autenticación básica
+#### 6. Implementar autenticación básica
 **Por qué**: Riesgo de seguridad crítico  
 **Opciones**:
 - JWT con Passport.js
@@ -135,7 +152,7 @@ Basado en el estado actual, estos son los siguientes pasos lógicos (ordenados p
 **Riesgo**: Medio (cambios en muchos puntos)  
 **Beneficio**: Seguridad, separación de usuarios
 
-#### 6. Configurar CI/CD real
+#### 7. Configurar CI/CD real
 **Por qué**: Mencionado en README pero no existe  
 **Archivos a crear**:
 - `.github/workflows/backend-ci.yml`
@@ -286,13 +303,20 @@ Para que un agente pueda continuar trabajando efectivamente en este proyecto:
 
 ## Changelog del Memory Bank
 
-- **2026-01-19 (tarde)**: Actualización tras migración a pnpm y correcciones
+- **2026-01-19 (sesión 3 - tarde)**: Implementación de tests E2E con Cypress
+  - Añadido item #2 "Implementar tests E2E básicos" como completado
+  - Actualizada sección de limitaciones conocidas (tests E2E implementados)
+  - Documentación completa de estrategia de testing E2E
+  - Renumerados items de next steps (del 2 al 7)
+  - Actualizado progress.md con nueva sección de Testing E2E
+  
+- **2026-01-19 (sesión 2 - tarde)**: Actualización tras migración a pnpm y correcciones
   - Marcado item #1 de prioridad alta como completado
   - Actualizado estado de infraestructura (ahora funcional)
   - Añadidas mejoras recientes en limitaciones conocidas
   - Renumerados items de next steps
   
-- **2026-01-19 (mañana)**: Creación inicial del Memory Bank
+- **2026-01-19 (sesión 1 - mañana)**: Creación inicial del Memory Bank
   - Análisis completo del codebase
   - Documentación de estado actual
   - Identificación de next steps y riesgos
