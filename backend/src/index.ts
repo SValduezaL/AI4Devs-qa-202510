@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
+import path from 'path';
 import candidateRoutes from './routes/candidateRoutes';
 import positionRoutes from './routes/positionRoutes';
 import { uploadFile } from './application/services/fileUploadService';
@@ -16,7 +17,8 @@ declare global {
   }
 }
 
-dotenv.config();
+// Cargar variables de entorno desde la raíz del proyecto
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 const prisma = new PrismaClient();
 
 export const app = express();
@@ -31,9 +33,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware para permitir CORS desde http://localhost:3000
+// Middleware para permitir CORS desde múltiples orígenes
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
+  : ['http://localhost:3000'];
+
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: allowedOrigins,
   credentials: true
 }));
 
@@ -51,7 +57,8 @@ app.use((req, res, next) => {
   next();
 });
 
-const port = 3010;
+const port = parseInt(process.env.BACKEND_PORT || '3010', 10);
+const host = process.env.BACKEND_HOST || 'localhost';
 
 app.get('/', (req, res) => {
   res.send('Hola LTI!');
@@ -64,5 +71,5 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+  console.log(`Server is running at http://${host}:${port}`);
 });

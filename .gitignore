@@ -1,28 +1,210 @@
-# Ignore in all directories
-**/.DS_Store
-#**/.env
-**/.env.example
-**/node_modules
-**/prompts_master.md
-
-# other dependencies
+# ============================================
+# DEPENDENCIAS
+# ============================================
+**/node_modules/
 **/.pnp
-**.pnp.js
+**/.pnp.js
+**/.yarn/cache
+**/.yarn/unplugged
+**/.yarn/build-state.yml
+**/.yarn/install-state.gz
+**/bower_components/
+**/jspm_packages/
 
-# testing
-**/coverage
+# ============================================
+# VARIABLES DE ENTORNO
+# ============================================
+# Archivos de entorno (excepto .env.example)
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
 
-# production
-**/build
-**/dist
+# ============================================
+# BUILD Y COMPILACIÓN
+# ============================================
+**/build/
+**/dist/
+**/out/
+**/.next/
+**/.nuxt/
+**/.cache/
+**/.parcel-cache/
+**/.vuepress/dist
+**/.docusaurus
+**/.serverless/
+**/.fusebox/
+**/compiled/
+**/*.tsbuildinfo
 
-# logs
+# ============================================
+# TESTING
+# ============================================
+**/coverage/
+**/.nyc_output/
+**/*.lcov
+**/__tests__/__snapshots__/
+**/test-results/
+**/.pytest_cache/
+**/.coverage
+**/htmlcov/
+
+# ============================================
+# LOGS
+# ============================================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+**/*.log
+**/logs/
+**/log/
 
-# IDE
-.idea
-.vscode
+# ============================================
+# BASE DE DATOS
+# ============================================
+# Archivos de base de datos local (NO ignorar migraciones)
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/*.db-shm
+**/*.db-wal
 
-# .env
+# ============================================
+# DOCKER
+# ============================================
+docker-compose.override.yml
+docker-compose.local.yml
+**/.dockerignore.local
+
+# ============================================
+# IDEs Y EDITORES
+# ============================================
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+**/*.code-workspace
+
+# IntelliJ / WebStorm / PHPStorm
+.idea/
+**/*.iml
+**/*.iws
+**/*.ipr
+**/out/
+.idea_modules/
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Sublime Text
+**/*.sublime-workspace
+**/*.sublime-project
+
+# Vim
+**/*.swp
+**/*.swo
+**/*.swn
+**/*~
+**/.vim/
+
+# Emacs
+**/*~
+**/#*#
+**/.#*
+
+# ============================================
+# SISTEMAS OPERATIVOS
+# ============================================
+# macOS
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+**/Icon
+**/.Spotlight-V100
+**/.Trashes
+**/.AppleDB
+**/.AppleDesktop
+**/Network Trash Folder
+**/Temporary Items
+**/.apdisk
+
+# Windows
+**/Thumbs.db
+**/ehthumbs.db
+**/Desktop.ini
+**/$RECYCLE.BIN/
+**/*.cab
+**/*.msi
+**/*.msix
+**/*.msm
+**/*.msp
+**/*.lnk
+
+# Linux
+**/.directory
+**/.Trash-*
+**/.nfs*
+
+# ============================================
+# CACHE Y TEMPORALES
+# ============================================
+**/.sass-cache/
+**/connect.lock
+**/typings/
+**/.eslintcache
+**/.stylelintcache
+**/.npm/
+**/.node_repl_history
+**/.yarn-integrity
+**/temp/
+**/tmp/
+**/*.tmp
+**/.temp/
+**/.tmp/
+
+# ============================================
+# HERRAMIENTAS DE DESARROLLO
+# ============================================
+# TypeScript
+**/*.tsbuildinfo
+
+# Prettier
+**/.prettierignore
+
+# ESLint
+**/.eslintignore
+
+# Storybook
+**/storybook-static/
+
+# ============================================
+# ARCHIVOS DE RESPALDO
+# ============================================
+**/*.bak
+**/*.backup
+**/*.old
+**/*.orig
+**/.backup/
+**/backup/
+
+# ============================================
+# ARCHIVOS ESPECÍFICOS DEL PROYECTO
+# ============================================
+**/prompts_master.md
+
+# ============================================
+# OTROS
+# ============================================
+**/.vscode-test
+**/.vercel
+**/.expo/
+**/.expo-shared/
+**/package-lock.json.swp
